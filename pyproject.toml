@@ -1,0 +1,22 @@
+[project]
+name = "moon-galbot"
+version = "0.1.0"
+description = "G1 语音抓取：VLM 解耦 + 视觉标记 + ACT 数据处理管线"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "lerobot",              # git 源见下方 [tool.uv.sources]；PyPI 的 0.1.0 无 ACT
+    "locate-anything",      # 本地包，带 transformers/triton 等 pin
+    "mcap>=1.4.0",
+    "mcap-protobuf-support>=0.5.4",
+    "numpy<2",              # locate-anything 要求；git-lerobot 不钉 numpy，兼容
+    "setuptools>=83.0.0",   # triton 运行时 JIT 构建需要，uv 不默认装
+    "torch==2.6.0",         # 钉到已验证可跑 ACT + CUDA 的版本
+    "torchvision==0.21.0",
+]
+
+[tool.uv.sources]
+locate-anything = { path = "../eagle/Embodied" }
+# 带 ACT 的 lerobot 只在 git 上（PyPI 0.1.0 是残缺老版，只有 tdmpc）。
+# 此 commit 的依赖声明诚实（torch>=2.2.1 / torchvision>=0.21 / wandb>=0.16.3 均开口），
+# 因此无需任何 override 即可与 locate-anything 共处。
+lerobot = { git = "https://github.com/huggingface/lerobot.git", rev = "0cf864870cf29f4738d3ade893e6fd13fbd7cdb5" }
